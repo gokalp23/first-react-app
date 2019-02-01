@@ -1,0 +1,12 @@
+@font-face {
+font-family: 'Prime Regular';
+font-style: normal;
+font-weight: normal;
+src: local('Prime Regular'), url('Prime-Regular.woff') format('woff');
+}
+
+h1 {
+	font-family: 'Prime Regular';
+	font-weight: 200;
+	color: blue;
+}
