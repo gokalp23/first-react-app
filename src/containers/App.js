@@ -1,42 +1,46 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
-
 import './App.css';
 
+import { setSearchField, requestPlayers } from '../actions'
+
+const mapStateToProps = (state) => {
+	return {
+		searchField: state.searchPlayers.searchField,
+		players: state.requestPlayers.players,
+		isPending: state.requestPlayers.isPending,
+		error: state.requestPlayers.error
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+		onRequestPlayers: () => dispatch(requestPlayers())
+	}
+}
 
 class App extends Component {
-	constructor(){
-		super()
-		this.state = {
-			players: [],
-			searchfield: ''
-		}
-	}
 
 	componentDidMount(){
-		fetch('https://jsonplaceholder.typicode.com/users')
-		.then(response => response.json())
-		.then(users => this.setState({ players: users }));
+		this.props.onRequestPlayers();
 	}
 
-	onSearchChange = (event) => {
-		this.setState({searchfield: event.target.value })
-		
-		
-	}
+	
 	render() {
-		const { players, searchfield } = this.state;
+		const { searchField, onSearchChange, players, isPending } = this.props;
 		const filteredPlayers = players.filter(player => {
-			return player.name.toLowerCase().includes(searchfield.toLowerCase())
+			return player.name.toLowerCase().includes(searchField.toLowerCase())
 		})
-		if (!players.length){
+		if (isPending){
 			return <h1 className='tc'> Loading... </h1>
 		}else {
 			return (
 			 <div className='tc'>
 				<h1 className='f1'>HoopFriends</h1>
-				<SearchBox searchChange = { this.onSearchChange }/>
+				<SearchBox searchChange = { onSearchChange }/>
 				<CardList players = { filteredPlayers }/>
 			 </div>
 			
@@ -49,4 +53,4 @@ class App extends Component {
 	
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
